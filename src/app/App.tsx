@@ -1,8 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import AppHeader from './layouts/AppHeader/AppHeader';
+import React from 'react';
 
-const render = () => {
-  ReactDOM.render(<h2>Hello from React!</h2>, document.getElementById('root'))
-}
+const App = () => {
+  return <AppHeader />;
+};
 
-render()
+export default App;

@@ -1,8 +1,9 @@
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 module.exports = [
-  // Add support for native node modules
   {
-    // We're specifying native_modules in the test because the asset relocator loader generates a
-    // "fake" .node file which is really a cjs file.
     test: /native_modules\/.+\.node$/,
     use: 'node-loader',
   },
@@ -36,4 +37,53 @@ module.exports = [
       },
     ],
   },
-]
+
+  // CSS
+  {
+    test: /\.(scss|css)$/,
+    exclude: /\.module.(scss|css)$/,
+    use: [
+      isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+      {
+        loader: 'css-loader',
+        options: {
+          sourceMap: isDevelopment,
+          importLoaders: 1,
+        },
+      },
+      {
+        loader: 'sass-loader',
+        options: {
+          sourceMap: isDevelopment,
+          sassOptions: {
+            includePaths: [path.resolve(__dirname, 'src'), 'node_modules'],
+          },
+        },
+      },
+    ],
+  },
+
+  // SCSS MODULES
+  {
+    test: /\.module\.(scss|css)$/i,
+    use: [
+      isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+      {
+        loader: 'css-loader',
+        options: {
+          importLoaders: 1,
+          modules: {
+            localIdentName: '[name]_[local]_[hash:base64:8]',
+          },
+          sourceMap: !isDevelopment,
+        },
+      },
+      {
+        loader: 'sass-loader',
+        options: {
+          sourceMap: !isDevelopment,
+        },
+      },
+    ],
+  },
+];
